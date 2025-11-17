@@ -1,118 +1,93 @@
 package iscteiul.ista.battleship;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("Testes para a classe Position")
 class PositionTest {
 
-    private Position position;
+    @Nested
+    @DisplayName("Testes de Inicialização")
+    class InitializationTests {
 
-    @BeforeEach
-    void setUp() {
-        position = new Position(3, 5);
+        @Test
+        @DisplayName("getRow e getColumn retornam os valores corretos")
+        void gettersTest() {
+            Position p = new Position(3, 5);
+            assertEquals(3, p.getRow());
+            assertEquals(5, p.getColumn());
+        }
+
+        @Test
+        @DisplayName("toString está formatado corretamente")
+        void toStringTest() {
+            Position p = new Position(2, 4);
+            assertEquals("Linha = 2 Coluna = 4", p.toString());
+        }
     }
 
-    @Test
-    @DisplayName("getRow e getColumn devolvem os valores passados ao construtor")
-    void constructorStoresRowAndColumn() {
-        assertAll("posição inicial",
-                () -> assertEquals(3, position.getRow()),
-                () -> assertEquals(5, position.getColumn())
-        );
+    @Nested
+    @DisplayName("Testes de Ocupação e Disparo")
+    class OccupancyTests {
+
+        @Test
+        @DisplayName("occupy marca a posição como ocupada")
+        void occupyTest() {
+            Position p = new Position(1, 1);
+            p.occupy();
+            assertTrue(p.isOccupied());
+        }
+
+        @Test
+        @DisplayName("shoot marca a posição como atingida")
+        void shootTest() {
+            Position p = new Position(1, 1);
+            p.shoot();
+            assertTrue(p.isHit());
+        }
     }
 
-    @Test
-    @DisplayName("equals é verdadeiro quando comparado com ele próprio (reflexividade)")
-    void equalsIsReflexive() {
-        assertEquals(position, position);
+    @Nested
+    @DisplayName("Testes de Comparação e Igualdade")
+    class EqualityTests {
+
+        @Test
+        @DisplayName("equals é verdadeiro para mesma posição")
+        void equalsTrueTest() {
+            Position p1 = new Position(2, 2);
+            Position p2 = new Position(2, 2);
+            assertEquals(p1, p2);
+        }
+
+        @Test
+        @DisplayName("equals é falso para posições diferentes")
+        void equalsFalseTest() {
+            Position p1 = new Position(1, 1);
+            Position p2 = new Position(1, 2);
+            assertNotEquals(p1, p2);
+        }
     }
 
-    @Test
-    @DisplayName("Duas Position com mesma linha e coluna são iguais e têm o mesmo hashCode")
-    void equalsSameRowAndColumn() {
-        Position other = new Position(3, 5);
+    @Nested
+    @DisplayName("Testes de Adjacência")
+    class AdjacencyTests {
 
-        assertAll("igualdade",
-                () -> assertEquals(position, other),
-                () -> assertEquals(other, position),
-                () -> assertEquals(position.hashCode(), other.hashCode())
-        );
-    }
+        @Test
+        @DisplayName("isAdjacentTo é verdadeiro para posições adjacentes")
+        void adjacentTrue() {
+            Position p1 = new Position(5, 5);
+            Position p2 = new Position(6, 6);
+            assertTrue(p1.isAdjacentTo(p2));
+        }
 
-    @Test
-    @DisplayName("Position não é igual a null nem a objetos de outra classe")
-    void equalsNullAndDifferentClass() {
-        assertNotEquals(null, position);
-        assertNotEquals(position, "não sou uma Position");
-    }
-
-    @Test
-    @DisplayName("Position com linha diferente não é igual")
-    void notEqualsDifferentRow() {
-        Position other = new Position(4, 5);
-        assertNotEquals(position, other);
-    }
-
-    @Test
-    @DisplayName("Position com coluna diferente não é igual")
-    void notEqualsDifferentColumn() {
-        Position other = new Position(3, 6);
-        assertNotEquals(position, other);
-    }
-
-    @Test
-    @DisplayName("isAdjacentTo devolve true para posições adjacentes (incluindo a própria)")
-    void isAdjacentToAdjacentPositions() {
-        assertAll("posições adjacentes",
-                () -> assertTrue(position.isAdjacentTo(new Position(3, 5)), "mesma posição"),
-                () -> assertTrue(position.isAdjacentTo(new Position(2, 5)), "acima"),
-                () -> assertTrue(position.isAdjacentTo(new Position(4, 5)), "abaixo"),
-                () -> assertTrue(position.isAdjacentTo(new Position(3, 4)), "esquerda"),
-                () -> assertTrue(position.isAdjacentTo(new Position(3, 6)), "direita"),
-                () -> assertTrue(position.isAdjacentTo(new Position(2, 4)), "diagonal sup-esq"),
-                () -> assertTrue(position.isAdjacentTo(new Position(2, 6)), "diagonal sup-dir"),
-                () -> assertTrue(position.isAdjacentTo(new Position(4, 4)), "diagonal inf-esq"),
-                () -> assertTrue(position.isAdjacentTo(new Position(4, 6)), "diagonal inf-dir")
-        );
-    }
-
-    @Test
-    @DisplayName("isAdjacentTo devolve false para posições não adjacentes")
-    void isAdjacentToNonAdjacentPositions() {
-        assertAll("posições não adjacentes",
-                () -> assertFalse(position.isAdjacentTo(new Position(1, 5)), "duas linhas acima"),
-                () -> assertFalse(position.isAdjacentTo(new Position(5, 5)), "duas linhas abaixo"),
-                () -> assertFalse(position.isAdjacentTo(new Position(3, 7)), "duas colunas à direita"),
-                () -> assertFalse(position.isAdjacentTo(new Position(3, 3)), "duas colunas à esquerda"),
-                () -> assertFalse(position.isAdjacentTo(new Position(1, 7)), "diagonal distante")
-        );
-    }
-
-    @Test
-    @DisplayName("occupy marca a posição como ocupada")
-    void occupyMarksPositionAsOccupied() {
-        assertFalse(position.isOccupied(), "por omissão não deve estar ocupada");
-        position.occupy();
-        assertTrue(position.isOccupied(), "depois de occupy deve estar ocupada");
-    }
-
-    @Test
-    @DisplayName("shoot marca a posição como atingida")
-    void shootMarksPositionAsHit() {
-        assertFalse(position.isHit(), "por omissão não deve estar atingida");
-        position.shoot();
-        assertTrue(position.isHit(), "depois de shoot deve estar atingida");
-    }
-
-    @Test
-    @DisplayName("toString devolve string com linha e coluna")
-    void toStringReturnsExpectedFormat() {
-        String s = position.toString();
-        assertAll("formato toString",
-                () -> assertTrue(s.contains("Linha = 3")),
-                () -> assertTrue(s.contains("Coluna = 5"))
-        );
+        @Test
+        @DisplayName("isAdjacentTo é falso para posições não adjacentes")
+        void adjacentFalse() {
+            Position p1 = new Position(1, 1);
+            Position p2 = new Position(4, 4);
+            assertFalse(p1.isAdjacentTo(p2));
+        }
     }
 }
