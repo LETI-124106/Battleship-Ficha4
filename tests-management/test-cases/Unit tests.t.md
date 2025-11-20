@@ -11,3 +11,18 @@ Tags: #unit-tests, #test-cases
 
 ## 4 Game test case 
 * gametest 
+
+
+## Execution results
+
+- Executado por: @LETI124106
+- Data: 2025-11-20
+- Resultado geral: **passed** (26 testes unitários executados com sucesso)
+- Relatório exportado para: `reports/tests`
+
+### Estado dos casos de teste
+
+- BargeTest — passed ✅
+- CompassTest — passed ✅
+- PositionTest — passed ✅
+- ShipTest — passed ✅
